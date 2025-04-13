@@ -1,10 +1,12 @@
 "use client";
 
-import { api } from "@/convex/_generated/api";
-import { useUser } from "@clerk/nextjs";
+import { updateUser } from "@/convex/users";
 import { useMutation } from "convex/react";
+import { useUser } from "@clerk/nextjs";
 import { useEffect } from "react";
-export default function SyncUserWithConvex() {
+import { api } from "@/convex/_generated/api";
+
+function SyncUserWithConvex() {
   const { user } = useUser();
   const updateUser = useMutation(api.users.updateUser);
 
@@ -28,3 +30,5 @@ export default function SyncUserWithConvex() {
 
   return null;
 }
+
+export default SyncUserWithConvex;
