@@ -4,7 +4,7 @@ import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { ConvexClientProvider } from "@/components/ConvexClientProvider";
 import Header from "@/components/Header";
-
+import SyncUserWithConvex from "@/components/SyncUserWithConvex"; // adjust the path as needed
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
