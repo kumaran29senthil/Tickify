@@ -33,6 +33,7 @@ export default function RootLayout({
         <ConvexClientProvider>
         <ClerkProvider>
           <Header />
+          <SyncUserWithConvex />
         {children}
         </ClerkProvider> 
         </ConvexClientProvider>
