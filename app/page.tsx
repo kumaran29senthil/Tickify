@@ -1,3 +1,4 @@
+import EventList from "@/components/EventList"; // adjust path if it's in another folder
 export default function Home() {
   return (
     <div className="">
