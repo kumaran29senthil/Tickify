@@ -141,7 +141,7 @@ export const processQueue = mutation({
       // Schedule expiration job for this offer
       await ctx.scheduler.runAfter(
         DURATIONS.TICKET_OFFER,
-        internal.waitingList.expireOffer,
+        internal.waitinglist.expireOffer,
         {
           waitingListId: user._id,
           eventId,
