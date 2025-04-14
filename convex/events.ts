@@ -2,8 +2,9 @@ import { query, mutation } from "./_generated/server";
 import { ConvexError, v } from "convex/values";
 import { DURATIONS, WAITING_LIST_STATUS, TICKET_STATUS } from "./constants";
 import { components, internal } from "./_generated/api";
-import { processQueue } from "./waitingList";
+import { processQueue } from "./waitinglist";
 import { MINUTE, RateLimiter } from "@convex-dev/rate-limiter";
+import { componentsGeneric } from "convex/server";
 
 export type Metrics = {
   soldTickets: number;
@@ -158,7 +159,7 @@ export const joinWaitingList = mutation({
       // Schedule a job to expire this offer after the offer duration
       await ctx.scheduler.runAfter(
         DURATIONS.TICKET_OFFER,
-        internal.waitingList.expireOffer,
+        internal.waitinglist.expireOffer,
         {
           waitingListId,
           eventId,
