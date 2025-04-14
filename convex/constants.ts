@@ -1,4 +1,4 @@
-\import { Doc } from "./_generated/dataModel";
+import { Doc } from "./_generated/dataModel";
 
 // Time constants in milliseconds
 export const DURATIONS = {
