@@ -50,7 +50,8 @@ export default defineSchema({
     name: v.string(),
     email: v.string(),
     userId: v.string(),
-    stripeConnectId: v.optional(v.string()),
+    razorpayContactId: v.optional(v.string()),
+    razorpayAccountId: v.optional(v.string()), // ✅ Added
   })
     .index("by_user_id", ["userId"])
     .index("by_email", ["email"]),

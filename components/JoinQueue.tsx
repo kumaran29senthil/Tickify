@@ -18,7 +18,7 @@ export default function JoinQueue({
 }) {
   const { toast } = useToast();
   const joinWaitingList = useMutation(api.events.joinWaitingList);
-  const queuePosition = useQuery(api.waitingList.getQueuePosition, {
+  const queuePosition = useQuery(api.waitinglist.getQueuePosition, {
     eventId,
     userId,
   });

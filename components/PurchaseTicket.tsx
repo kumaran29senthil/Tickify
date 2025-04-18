@@ -1,6 +1,6 @@
 "use client";
 
-import { createStripeCheckoutSession } from "@/app/actions/createStripeCheckoutSession";
+import { createRazorpayCheckoutSession } from "@/app/actions/createRazorpayCheckoutSession";
 import { Id } from "@/convex/_generated/dataModel";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -13,7 +13,7 @@ import { Ticket } from "lucide-react";
 export default function PurchaseTicket({ eventId }: { eventId: Id<"events"> }) {
   const router = useRouter();
   const { user } = useUser();
-  const queuePosition = useQuery(api.waitingList.getQueuePosition, {
+  const queuePosition = useQuery(api.waitinglist.getQueuePosition, {
     eventId,
     userId: user?.id ?? "",
   });
@@ -56,7 +56,7 @@ export default function PurchaseTicket({ eventId }: { eventId: Id<"events"> }) {
 
     try {
       setIsLoading(true);
-      const { sessionUrl } = await createStripeCheckoutSession({
+      const { sessionUrl } = await createRazorpayCheckoutSession({
         eventId,
       });
 

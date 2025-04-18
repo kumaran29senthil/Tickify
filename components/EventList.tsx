@@ -4,7 +4,8 @@ import { api } from "@/convex/_generated/api";
 import { useQuery } from "convex/react";
 import Spinner from "./Spinner";
 import { CalendarDays, Ticket } from "lucide-react";
-
+import EventCard from "./EventCard";
+import { useUser } from "@clerk/nextjs";
 function EventList() {
   const events = useQuery(api.events.get);
 
