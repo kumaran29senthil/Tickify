@@ -1,4 +1,3 @@
-// createRazorpayCheckoutSession.ts
 "use server";
 
 import Razorpay from "razorpay";
@@ -45,7 +44,6 @@ export async function createRazorpayCheckoutSession({
     throw new Error("Ticket offer has no expiration date");
   }
 
-  // 🧩 Seller's Razorpay sub-account (Connect)
   const razorpayAccountId = await convex.query(
     api.users.getUsersRazorpayContactId,
     { userId: event.userId }
@@ -63,13 +61,13 @@ export async function createRazorpayCheckoutSession({
           `${process.env.RAZORPAY_KEY_ID}:${process.env.RAZORPAY_KEY_SECRET}`
         ).toString("base64"),
       "Content-Type": "application/json",
-      "X-Razorpay-Account": razorpayAccountId, // Razorpay Connect key here!
+      "X-Razorpay-Account": razorpayAccountId,
     },
     body: JSON.stringify({
       amount: Math.round(event.price * 100),
       currency: "INR",
       receipt: `rcpt_${eventId}_${userId}`,
-      payment_capture: true,
+      payment_capture: 1,
       notes: {
         eventId,
         userId,
@@ -80,11 +78,18 @@ export async function createRazorpayCheckoutSession({
 
   const order = await orderRes.json();
 
+  if (!order.id) {
+    throw new Error("Razorpay order creation failed");
+  }
+
   return {
     orderId: order.id,
-    razorpayKey: process.env.RAZORPAY_KEY_ID,
+    razorpayKey: process.env.RAZORPAY_KEY_ID!,
     amount: order.amount,
     currency: order.currency,
+    eventId,
+    userId,
+    waitingListId: queuePosition._id,
     name: event.name,
     description: event.description,
     successUrl: `${baseUrl}/tickets/purchase-success?order_id=${order.id}`,
