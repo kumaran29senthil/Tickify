@@ -110,7 +110,7 @@ export default function TicketPage() {
               ticket.event.is_cancelled ? "text-red-900" : "text-blue-900"
             }`}
           >
-            Need Help?
+            Need Helppp?
           </h3>
           <p
             className={`mt-1 text-sm ${
