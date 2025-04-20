@@ -3,15 +3,19 @@
 import { createRazorpayCheckoutSession } from "@/app/actions/createRazorpayCheckoutSession";
 import { Id } from "@/convex/_generated/dataModel";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import { api } from "@/convex/_generated/api";
 import { useQuery } from "convex/react";
 import ReleaseTicket from "./ReleaseTicket";
 import { Ticket } from "lucide-react";
 
+declare global {
+  interface Window {
+    Razorpay: any;
+  }
+}
+
 export default function PurchaseTicket({ eventId }: { eventId: Id<"events"> }) {
-  const router = useRouter();
   const { user } = useUser();
   const queuePosition = useQuery(api.waitinglist.getQueuePosition, {
     eventId,
@@ -26,7 +30,7 @@ export default function PurchaseTicket({ eventId }: { eventId: Id<"events"> }) {
 
   useEffect(() => {
     const calculateTimeRemaining = () => {
-      if (isExpired) {
+      if (!offerExpiresAt || isExpired) {
         setTimeRemaining("Expired");
         return;
       }
@@ -56,13 +60,40 @@ export default function PurchaseTicket({ eventId }: { eventId: Id<"events"> }) {
 
     try {
       setIsLoading(true);
-      const { sessionUrl } = await createRazorpayCheckoutSession({
-        eventId,
-      });
+      const res = await createRazorpayCheckoutSession({ eventId });
 
-      if (sessionUrl) {
-        router.push(sessionUrl);
-      }
+      const options = {
+        key: res.razorpayKey,
+        amount: res.amount,
+        currency: res.currency,
+        name: res.name,
+        description: res.description,
+        order_id: res.orderId,
+        handler: function (response: any) {
+          // Redirect or confirm success
+          window.location.href = res.successUrl;
+        },
+        prefill: {
+          name: user.fullName || "",
+          email: user.primaryEmailAddress?.emailAddress || "",
+        },
+        notes: {
+          eventId,
+          userId: user.id,
+          waitingListId: queuePosition?._id,
+        },
+        theme: {
+          color: "#f59e0b",
+        },
+        modal: {
+          ondismiss: function () {
+            window.location.href = res.cancelUrl;
+          },
+        },
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
     } catch (error) {
       console.error("Error creating checkout session:", error);
     } finally {
@@ -111,7 +142,10 @@ export default function PurchaseTicket({ eventId }: { eventId: Id<"events"> }) {
         </button>
 
         <div className="mt-4">
-          <ReleaseTicket eventId={eventId} waitingListId={queuePosition._id} />
+          <ReleaseTicket
+            eventId={eventId}
+            waitingListId={queuePosition._id}
+          />
         </div>
       </div>
     </div>
